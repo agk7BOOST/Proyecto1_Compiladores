@@ -13,7 +13,7 @@ Proyecto universitario para la materia de Compiladores, enfocado en los fundamen
 
 ## 📸 Vista Previa de la Aplicación
 
-*La interfaz permite abrir archivos de código o pegar el texto directamente para su análisis.*
+<img width="881" height="694" alt="image" src="https://github.com/user-attachments/assets/35bea543-2054-4102-9675-bb492cd8246b" />
 
 ---
 
