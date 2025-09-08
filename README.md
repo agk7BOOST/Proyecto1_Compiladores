@@ -1,36 +1,47 @@
------
+# ⚙️ Analizador Léxico con Interfaz Gráfica
 
-# ⚙️ Preprocesador y Analizador Léxico de Código Fuente
+Proyecto universitario para la materia de Compiladores, enfocado en los fundamentos del procesamiento de lenguajes de programación.
 
-Proyecto universitario grupal enfocado en los fundamentos de la compilación y el procesamiento de lenguajes de programación.
+**Integrantes:**
+- Ivan Alvarenga
+- Juan Isidro Garcia
+- Maria Jazmin Caceres
+- Ciro Sosa
+- Victor Duarte
 
------
+---
+
+## 📸 Vista Previa de la Aplicación
+
+*La interfaz permite abrir archivos de código o pegar el texto directamente para su análisis.*
+
+---
+
+## 🚀 Cómo Usar el Programa
+
+Tienes dos formas de ejecutar este analizador:
+
+### Opción 1: Ejecutable `.jar` (Recomendado)
+1.  Ve a la sección de **[Releases](https://github.com/agk7BOOST/Proyecto1_Compiladores/releases)** en este repositorio.
+2.  Descarga el archivo `AnalizadorLexico.jar` de la última versión.
+3.  Asegúrate de tener Java 8 o una versión superior instalada en tu sistema.
+4.  Haz doble clic en el archivo `.jar` para ejecutar la aplicación.
+
+### Opción 2: Desde el Código Fuente
+1.  Clona este repositorio en tu máquina local.
+2.  Ábrelo con un IDE como IntelliJ IDEA.
+3.  Ejecuta el método `main` en la clase `Principal.java`.
+
+---
 
 ## 🎯 Objetivo del Proyecto
 
-El objetivo principal es desarrollar una herramienta en consola capaz de realizar dos tareas fundamentales sobre un archivo de código fuente:
+Desarrollar una herramienta capaz de realizar dos tareas fundamentales sobre un archivo de código fuente:
 
 1.  **Preprocesamiento:** Limpiar el código eliminando comentarios y espacios innecesarios.
-2.  **Análisis Léxico:** Analizar el código limpio para identificar, clasificar y reportar sus componentes léxicos (tokens).
+2.  **Análisis Léxico:** Analizar el código limpio para identificar y clasificar sus componentes léxicos (tokens).
 
------
-
-## ✨ Características Principales
-
-### Fase 1: Limpieza de Código
-
-  - **Lectura de archivos:** El programa debe poder leer un archivo de código fuente como entrada.
-  - **Eliminación de comentarios:**
-      - Soporte para comentarios de una sola línea (ej. `// esto es un comentario`).
-      - Soporte para comentarios de múltiples líneas (ej. `/* ... */`).
-  - **Normalización de espacios:** Elimina espacios y tabulaciones innecesarias al inicio y al final de cada línea.
-  - **Generación de salida:** Crea un nuevo archivo que contiene el código fuente ya limpio y listo para ser analizado.
-
-### Fase 2: Análisis Léxico (Tokenización)
-
-  - Una vez limpio el código, el programa lo procesa secuencialmente para identificar y clasificar cada "palabra" o símbolo (token).
-
------
+---
 
 ## 🔖 Clasificación de Tokens
 
@@ -45,41 +56,25 @@ El analizador clasifica los tokens encontrados en las siguientes categorías:
 | `DELIMITADOR` | Símbolos de puntuación y agrupación. | `;`, `(`, `)`, `{`, `}` |
 | `ERROR` | Cualquier carácter o secuencia no reconocida. | `$`, `#`, `?` |
 
------
+---
 
 ## 💻 Formato de Salida
 
-Por cada token identificado, el programa debe imprimir en la consola un reporte con el siguiente formato, mostrando su clasificación y su valor:
+Por cada token identificado, el programa muestra su clasificación y su valor:
 
+**Ejemplo de salida en la interfaz:**
 ```
-<TIPO_DE_TOKEN> -> <VALOR_DEL_TOKEN>
-```
+--- CÓDIGO LIMPIO ---
+int a=0;
+for(int i=0; i<10; i++){
+a=a+1;
+}
 
-**Ejemplo de salida:**
-
-```
-PALABRA_CLAVE -> if
-DELIMITADOR -> (
-IDENTIFICADOR -> x
-OPERADOR -> >
-NUMERO -> 10
-DELIMITADOR -> )
+--- TOKENS ENCONTRADOS ---
+<PALABRA_CLAVE> -> <int>
+<IDENTIFICADOR> -> <a>
+<OPERADOR> -> <=>
+<NUMERO> -> <0>
+<DELIMITADOR> -> <;>
 ...
 ```
-
------
-
-## 🛠️ Requisitos de Implementación
-
-  - **Modularidad:** El código debe estar bien organizado, separando la lógica en funciones claras para la lectura, limpieza y el análisis léxico.
-  - **Funciones Clave:**
-      - Implementar una función específica (`esPalabraClave`) que verifique si un lexema corresponde a una palabra clave.
-      - Crear una función principal de análisis que clasifique cada lexema en su tipo de token correspondiente.
-  - **Manejo de Estructura:** El programa debe ser capaz de procesar el código fuente de manera secuencial, manejando correctamente los espacios, tabulaciones y saltos de línea.
-
------
-
-## 🚀 Entrega Final
-
-  - Presentación y exposición del funcionamiento del programa.
-  - Revisión y explicación del código fuente desarrollado.
