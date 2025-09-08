@@ -6,10 +6,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,8 +36,8 @@ public class AnalizadorLexico {
 
         //Eliminamos espacios y tabulaciones al inicio y final de cada linea
         //Tambien elimina lineas vacias
-        return sinComentarios
-                .lines()
+        // Dividimos la cadena por saltos de línea y la convertimos en un Stream
+        return Arrays.stream(sinComentarios.split("\\r?\\n"))
                 .map(String::trim)
                 .filter(linea -> !linea.isEmpty())
                 .collect(Collectors.joining("\n"));
@@ -52,8 +49,9 @@ public class AnalizadorLexico {
 
 
     //Conjunto de palabras clave para una verificacion rapidita
-    private static final Set<String> PALABRAS_CLAVE = new HashSet<>(Set.of(
-            "if", "else", "while", "return", "int", "float", "void", "for"));
+    private static final Set<String> PALABRAS_CLAVE = new HashSet<>(Arrays.asList(
+            "if", "else", "while", "return", "int", "float", "void", "for"
+    ));
     //Este es nuestra lista de palabras clave
 
     //Funcion para verificar si un lexema es palabra clave REQUISITO DE PROYECTO

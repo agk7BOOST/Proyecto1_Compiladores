@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Analizador lexico:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Analizador_lexico_jar</output-path>
+    <root id="archive" name="Analizador lexico.jar">
+      <element id="module-output" name="Analizador lexico" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.4.1/flatlaf-3.4.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
