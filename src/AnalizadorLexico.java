@@ -92,11 +92,13 @@ public class AnalizadorLexico {
                 continue;
                 //esto ignora los espacios
             }
+
+
             if (matcher.group("COMBINACION") != null) {
-                String lexema = matcher.group("COMBINACION");
                 //COMBINACIONES tiene combinaciones alfanumericas
                 //por lo que puede tratarse de identificadores (variables, parametros, etc)
                 //o alguna palabra clave (void, if, else, while, int, etc...)
+                String lexema = matcher.group("COMBINACION");
                 if (esPalabraClave(lexema)) {
                     tokens.add(new Token.Builder()
                             .conTipo(TipoToken.PALABRA_CLAVE)
@@ -109,40 +111,30 @@ public class AnalizadorLexico {
                             .conValor(lexema)
                             .construir());
                     //Si detecta cualquier otra combinacion alfanumerica instancia un token IDENTIFICADOR
-                    continue;
-
                 }
-
-                if(matcher.group("NUMERO") != null) {
-                    tokens.add(new Token.Builder()
-                            .conTipo(TipoToken.NUMERO)
-                            .conValor(lexema)
-                            .construir());
-                    continue;
-                }
-                if (matcher.group("OPERADOR") != null) {
-                    tokens.add(new Token.Builder()
-                            .conTipo(TipoToken.OPERADOR)
-                            .conValor(lexema)
-                            .construir());
-                    continue;
-                }
-                if (matcher.group("DELIMITADOR") != null) {
-                    tokens.add(new Token.Builder()
-                            .conTipo(TipoToken.DELIMITADOR)
-                            .conValor(lexema)
-                            .construir());
-                    continue;
-                }
+            } else if (matcher.group("NUMERO") != null) {
+                tokens.add(new Token.Builder()
+                        .conTipo(TipoToken.NUMERO)
+                        .conValor(matcher.group("NUMERO"))
+                        .construir());
+            } else if (matcher.group("OPERADOR") != null) {
+                tokens.add(new Token.Builder()
+                        .conTipo(TipoToken.OPERADOR)
+                        .conValor(matcher.group("OPERADOR"))
+                        .construir());
+            } else if (matcher.group("DELIMITADOR") != null) {
+                tokens.add(new Token.Builder()
+                        .conTipo(TipoToken.DELIMITADOR)
+                        .conValor(matcher.group("DELIMITADOR"))
+                        .construir());
+            } else if (matcher.group("ERROR") != null && !matcher.group("ERROR").trim().isEmpty()) {
                 //Cualquier caracter que no coincida pues es clasificado como error
-                if (matcher.group("ERROR") != null && !matcher.group("ERROR").trim().isEmpty()) {
-                    tokens.add(new Token.Builder()
-                            .conTipo(TipoToken.ERROR)
-                            .conValor(lexema)
-                            .construir());
-                }
+                tokens.add(new Token.Builder()
+                        .conTipo(TipoToken.ERROR)
+                        .conValor(matcher.group("ERROR"))
+                        .construir());
             }
         }
         return tokens;
     }
-}
+    }
