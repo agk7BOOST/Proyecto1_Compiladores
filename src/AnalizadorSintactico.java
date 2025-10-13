@@ -20,31 +20,24 @@ public class AnalizadorSintactico {
 
     // --- Métodos de Parseo Principales ---
 
-    // Decide si lo que viene es una declaración de variable o una sentencia.
     private Nodo parseDeclaracionOSentencia() {
-        // Lookahead: Si vemos "int" o "float" seguido de un nombre, es una declaración.
         if (matchValor("int", "float") && siguienteEs(TipoToken.IDENTIFICADOR)) {
             return parseDeclaracion();
         }
-        // Si no, es una sentencia.
         return parseSentencia();
     }
 
-    // Enruta hacia el método de parseo de sentencias correcto.
     private Nodo parseSentencia() {
         if (matchValor("if")) return parseIf();
         if (matchValor("while")) return parseWhile();
         if (matchValor("for")) return parseFor();
         if (matchValor("imprimir")) return parseSentenciaImprimir();
         if (matchValor("{")) return new NodoBloque(parseBloque());
-
-        // Si no es ninguna de las anteriores, es una "sentencia de expresión" (ej. una asignación).
         return parseSentenciaDeExpresion();
     }
 
     // --- Parseo de Sentencias Específicas ---
 
-    // Parsea un bloque de código { ... }
     private List<Nodo> parseBloque() {
         consumir("{", "Se esperaba '{' para iniciar un bloque.");
         List<Nodo> sentencias = new ArrayList<>();
@@ -55,7 +48,6 @@ public class AnalizadorSintactico {
         return sentencias;
     }
 
-    // Parsea una declaración de variable: int x = 5;
     private Nodo parseDeclaracion() {
         Token tipo = avanzar();
         Token id = consumir(TipoToken.IDENTIFICADOR, "Se esperaba un nombre de variable.");
@@ -68,14 +60,12 @@ public class AnalizadorSintactico {
         return new NodoDeclaracion(tipo, id, valor);
     }
 
-    // Parsea una sentencia que consiste en una expresión seguida de punto y coma: x = 10;
     private Nodo parseSentenciaDeExpresion() {
         Nodo expr = parseExpresion();
         consumir(";", "Se esperaba ';' al final de la sentencia.");
         return expr;
     }
 
-    // Parsea la función imprimir.
     private Nodo parseSentenciaImprimir() {
         consumir("imprimir", "");
         consumir("(", "Se esperaba '(' después de 'imprimir'.");
@@ -108,19 +98,27 @@ public class AnalizadorSintactico {
         return new NodoWhile(condicion, cuerpo);
     }
 
+    // MÉTODO CORREGIDO
     private Nodo parseFor() {
         consumir("for", "");
         consumir("(", "Se esperaba '(' después de 'for'.");
 
         Nodo inicializador;
         if (matchValor(";")) {
-            consumir(";", ""); // Inicializador vacío.
             inicializador = null;
         } else if (matchValor("int", "float")) {
-            inicializador = parseDeclaracion();
+            Token tipo = avanzar();
+            Token id = consumir(TipoToken.IDENTIFICADOR, "Se esperaba un nombre de variable.");
+            Nodo valor = null;
+            if (matchValor("=")) {
+                consumir("=", "");
+                valor = parseExpresion();
+            }
+            inicializador = new NodoDeclaracion(tipo, id, valor);
         } else {
-            inicializador = parseSentenciaDeExpresion();
+            inicializador = parseExpresion();
         }
+        consumir(";", "Se esperaba ';' después del inicializador del for.");
 
         Nodo condicion = null;
         if (!matchValor(";")) {
@@ -138,17 +136,17 @@ public class AnalizadorSintactico {
         return new NodoFor(inicializador, condicion, incremento, cuerpo);
     }
 
-    // --- Jerarquía de Parseo de Expresiones (Precedencia de Operadores) ---
+    // --- Jerarquía de Parseo de Expresiones ---
 
     private Nodo parseExpresion() {
         return parseAsignacion();
     }
 
     private Nodo parseAsignacion() {
-        Nodo expr = parseComparacion(); // Parsea el lado izquierdo.
+        Nodo expr = parseComparacion();
         if (matchValor("=")) {
-            avanzar(); // Consume el '='.
-            Nodo valor = parseAsignacion(); // Recursión para asociatividad derecha (ej. a = b = 5).
+            avanzar();
+            Nodo valor = parseAsignacion();
             if (expr instanceof NodoVariable) {
                 Token nombre = ((NodoVariable) expr).nombre;
                 return new NodoAsignacion(nombre, valor);
@@ -178,7 +176,22 @@ public class AnalizadorSintactico {
         return expr;
     }
 
+    private Nodo parseMultiplicacion() {
+        Nodo expr = parsePrimario();
+        while (matchValor("*", "/")) {
+            Token op = avanzar();
+            Nodo der = parsePrimario();
+            expr = new NodoExpresionBinaria(expr, op, der);
+        }
+        return expr;
+    }
+
     private Nodo parseFactor() {
+        return parseMultiplicacion();
+    }
+
+
+    private Nodo parsePrimario() {
         if (match(TipoToken.STRING)) return new NodoStringLiteral(avanzar());
         if (match(TipoToken.NUMERO)) return new NodoNumero(avanzar());
         if (match(TipoToken.IDENTIFICADOR)) return new NodoVariable(avanzar());

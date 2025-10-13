@@ -24,20 +24,20 @@ public class Simulador implements Visitor<Object> {
         return null;
     }
 
+    // MÉTODO CORREGIDO
     @Override
     public Object visit(NodoBloque nodo) {
-        Map<String, Object> entornoAnterior = this.entorno;
-        this.entorno = new HashMap<>(entornoAnterior); // Entra en un nuevo ámbito
+        // Un bloque ahora simplemente ejecuta sentencias en el ámbito actual.
+        // La gestión del ámbito se delega a las estructuras que lo requieren (for, etc).
         for (Nodo sentencia : nodo.sentencias) {
             sentencia.accept(this);
         }
-        this.entorno = entornoAnterior; // Sale del ámbito
         return null;
     }
 
     @Override
     public Object visit(NodoDeclaracion nodo) {
-        Object valor = nodo.expresion.accept(this);
+        Object valor = (nodo.expresion != null) ? nodo.expresion.accept(this) : null;
         entorno.put(nodo.identificador.getValor(), valor);
         return null;
     }
@@ -63,6 +63,7 @@ public class Simulador implements Visitor<Object> {
         return null;
     }
 
+    // MÉTODO CORREGIDO
     @Override
     public Object visit(NodoWhile nodo) {
         while (esVerdadero(nodo.condicion.accept(this))) {
@@ -73,8 +74,8 @@ public class Simulador implements Visitor<Object> {
 
     @Override
     public Object visit(NodoFor nodo) {
-        Map<String, Object> entornoAnterior = this.entorno;
-        this.entorno = new HashMap<>(entornoAnterior); // El 'for' crea su propio ámbito
+        // El 'for' crea su propio ámbito para la variable de inicialización
+        Map<String, Object> entornoAnterior = new HashMap<>(this.entorno);
 
         if (nodo.inicializador != null) {
             nodo.inicializador.accept(this);
@@ -109,11 +110,7 @@ public class Simulador implements Visitor<Object> {
         }
 
         if (!(izq instanceof Integer) || !(der instanceof Integer)) {
-            // Permitimos imprimir cadenas literales, pero no operar con ellas
-            if (izq instanceof String || der instanceof String) {
-                throw new RuntimeException("No se pueden realizar operaciones aritméticas o lógicas con cadenas de texto.");
-            }
-            throw new RuntimeException("Los operandos deben ser números enteros.");
+            throw new RuntimeException("Los operandos deben ser números enteros para esta operación.");
         }
         int numIzq = (Integer) izq;
         int numDer = (Integer) der;
@@ -146,12 +143,13 @@ public class Simulador implements Visitor<Object> {
         }
         throw new RuntimeException("Variable no definida '" + nombre + "'.");
     }
+
     @Override
     public Object visit(NodoStringLiteral nodo) {
-        // Devuelve el valor del string, quitando las comillas del principio y del final.
         String valor = nodo.valor.getValor();
         return valor.substring(1, valor.length() - 1);
     }
+
     private boolean esVerdadero(Object obj) {
         if (obj == null) return false;
         if (obj instanceof Boolean) return (Boolean) obj;
