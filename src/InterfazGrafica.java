@@ -17,25 +17,23 @@ import java.util.regex.Pattern;
 
 public class InterfazGrafica extends JFrame {
 
-    private JTextPane areaCodigo; // CAMBIADO a JTextPane
-    private JTextArea areaLexico, areaAst, areaAstOptimizado, areaConsola, areaGenerado;
+    private JTextPane areaCodigo;
+    private JTextArea areaLexico, areaSintactico, areaSemantico, areaOptimizado, areaGenerado, areaConsola;
     private AnalizadorLexico analizadorLexico;
 
-    // --- NUEVOS ATRIBUTOS PARA ESTILOS ---
     private Style stylePalabraClave, styleIdentificador, styleNumero, styleString, styleOperador, styleComentario, styleDefault;
 
     public InterfazGrafica() {
         FlatDarculaLaf.setup();
         analizadorLexico = new AnalizadorLexico();
 
-        setTitle("Compilador Didáctico - Grupo 2");
+        setTitle("Compilador Didáctico - Fases del Proceso");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
 
         add(crearPanelSuperior(), BorderLayout.NORTH);
 
-        // --- ÁREA DE CÓDIGO CON JTextPane ---
         areaCodigo = new JTextPane();
         areaCodigo.setFont(new Font("Consolas", Font.PLAIN, 14));
         areaCodigo.setText(
@@ -56,7 +54,6 @@ public class InterfazGrafica extends JFrame {
                         "}\n"
         );
 
-        // El TextLineNumber necesita un JTextArea, así que creamos un proxy invisible
         JTextArea textAreaProxy = new JTextArea();
         textAreaProxy.setDocument(areaCodigo.getDocument());
         textAreaProxy.setFont(areaCodigo.getFont());
@@ -73,30 +70,30 @@ public class InterfazGrafica extends JFrame {
         panelPrincipal.setBorder(new EmptyBorder(0, 10, 10, 10));
         panelPrincipal.add(splitPanePrincipal, BorderLayout.CENTER);
 
+        // --- CAMBIO PARA ESTABILIZAR EL BOTÓN ---
         JButton botonCompilar = new JButton("Compilar y Ejecutar");
         botonCompilar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         botonCompilar.addActionListener(e -> compilar());
-        panelPrincipal.add(botonCompilar, BorderLayout.SOUTH);
+
+        // 1. Creamos un panel contenedor para el botón.
+        // Por defecto, usa FlowLayout, que centra los componentes y respeta su tamaño.
+        JPanel panelBoton = new JPanel();
+        panelBoton.add(botonCompilar);
+
+        // 2. Añadimos el panel (en lugar del botón directamente) a la parte inferior.
+        panelPrincipal.add(panelBoton, BorderLayout.SOUTH);
+        // --- FIN DEL CAMBIO ---
 
         add(panelPrincipal, BorderLayout.CENTER);
         setJMenuBar(crearBarraMenu());
 
-        // --- CONFIGURACIÓN DEL RESALTADO DE SINTAXIS ---
         inicializarEstilos();
         areaCodigo.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                actualizarResaltado();
-            }
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                actualizarResaltado();
-            }
-            @Override
-            public void changedUpdate(DocumentEvent e) {}
+            @Override public void insertUpdate(DocumentEvent e) { actualizarResaltado(); }
+            @Override public void removeUpdate(DocumentEvent e) { actualizarResaltado(); }
+            @Override public void changedUpdate(DocumentEvent e) {}
         });
 
-        // Resaltado inicial
         actualizarResaltado();
     }
 
@@ -105,29 +102,43 @@ public class InterfazGrafica extends JFrame {
             limpiarResultados();
             String codigo = areaCodigo.getText();
 
-            List<Token> tokens = analizadorLexico.analizar(analizadorLexico.limpiarCodigo(codigo));
+            // --- FASE 1: ANÁLISIS LÉXICO ---
+            String codigoLimpio = analizadorLexico.limpiarCodigo(codigo);
+            List<Token> tokens = analizadorLexico.analizar(codigoLimpio);
             mostrarTokens(tokens);
 
             if (tokens.stream().anyMatch(t -> t.getTipo() == TipoToken.ERROR)) {
-                areaAst.setText("Se encontraron errores léxicos. Corrija el código y vuelva a intentarlo.");
+                areaSintactico.setText("Se encontraron errores léxicos. Corrija el código y vuelva a intentarlo.");
                 return;
             }
-
             if (tokens.isEmpty()) {
-                areaAst.setText("No hay tokens para analizar.");
+                areaSintactico.setText("No hay tokens para analizar.");
                 return;
             }
 
+            // --- FASE 2: ANÁLISIS SINTÁCTICO ---
             AnalizadorSintactico parser = new AnalizadorSintactico(tokens);
             Programa ast = parser.analizar();
-            areaAst.setText(new AstPrinter().print(ast));
+            areaSintactico.setText(new AstPrinter().print(ast));
 
+            // --- FASE 3: ANÁLISIS SEMÁNTICO ---
+            AnalizadorSemantico semantico = new AnalizadorSemantico(tokens);
+            String resultadoSemantico = semantico.analizar();
+            areaSemantico.setText(resultadoSemantico);
+            if (resultadoSemantico.contains("ERROR SEMÁNTICO")) {
+                areaOptimizado.setText("Se encontraron errores semánticos. No se puede continuar.");
+                return;
+            }
+
+            // --- FASE 4: OPTIMIZACIÓN DE CÓDIGO ---
             OptimizadorCodigo optimizador = new OptimizadorCodigo();
             Programa astOptimizado = (Programa) optimizador.optimizar(ast);
-            areaAstOptimizado.setText(new AstPrinter().print(astOptimizado));
+            areaOptimizado.setText(new AstPrinter().print(astOptimizado));
 
+            // --- FASE 5: GENERACIÓN DE CÓDIGO INTERMEDIO ---
             areaGenerado.setText(new GeneradorCodigo().generar(astOptimizado));
 
+            // --- FASE 6: EJECUCIÓN (SIMULACIÓN) ---
             Simulador simulador = new Simulador();
             String salidaConsola = simulador.simular(astOptimizado);
             areaConsola.setText(salidaConsola);
@@ -139,13 +150,12 @@ public class InterfazGrafica extends JFrame {
 
     private void limpiarResultados() {
         areaLexico.setText("");
-        areaAst.setText("");
-        areaAstOptimizado.setText("");
+        areaSintactico.setText("");
+        areaSemantico.setText("");
+        areaOptimizado.setText("");
         areaGenerado.setText("");
         areaConsola.setText("");
     }
-
-    // --- MÉTODOS PARA RESALTADO DE SINTAXIS ---
 
     private void inicializarEstilos() {
         StyledDocument doc = areaCodigo.getStyledDocument();
@@ -181,12 +191,12 @@ public class InterfazGrafica extends JFrame {
             doc.setCharacterAttributes(0, texto.length(), styleDefault, true);
 
             String patronTokens =
-                    "(//.*)|" + // 1: Comentarios
-                            "(\"[^\"]*\")|" + // 2: Strings
-                            "\\b(if|else|while|return|int|float|void|for|imprimir)\\b|" + // 3: Palabras clave
-                            "([a-zA-Z_][a-zA-Z0-9_]*)|" + // 4: Identificadores
-                            "(\\d+)|" + // 5: Números
-                            "(==|!=|<=|>=|&&|\\|\\||[+\\-*/=<>(){};])"; // 6: Operadores
+                    "(//.*)|" +
+                            "(\"[^\"]*\")|" +
+                            "\\b(if|else|while|return|int|float|void|for|imprimir)\\b|" +
+                            "([a-zA-Z_][a-zA-Z0-9_]*)|" +
+                            "(\\d+)|" +
+                            "(==|!=|<=|>=|&&|\\|\\||[+\\-*/=<>(){};])";
 
             Pattern pattern = Pattern.compile(patronTokens);
             Matcher matcher = pattern.matcher(texto);
@@ -210,8 +220,6 @@ public class InterfazGrafica extends JFrame {
         });
     }
 
-    // --- MÉTODOS PARA CREAR LA UI ---
-
     private JPanel crearPanelSuperior() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(60, 63, 65));
@@ -231,18 +239,20 @@ public class InterfazGrafica extends JFrame {
     private JTabbedPane crearPanelDeResultados() {
         JTabbedPane tabs = new JTabbedPane();
         areaLexico = new JTextArea();
-        areaAst = new JTextArea();
-        areaAstOptimizado = new JTextArea();
+        areaSintactico = new JTextArea();
+        areaSemantico = new JTextArea();
+        areaOptimizado = new JTextArea();
         areaGenerado = new JTextArea();
         areaConsola = new JTextArea();
 
-        tabs.addTab("Tokens", new JScrollPane(areaLexico));
-        tabs.addTab("AST", new JScrollPane(areaAst));
-        tabs.addTab("AST Optimizado", new JScrollPane(areaAstOptimizado));
-        tabs.addTab("Código Generado (C++)", new JScrollPane(areaGenerado));
-        tabs.addTab("Consola", new JScrollPane(areaConsola));
+        tabs.addTab("1. Análisis Léxico (Tokens)", new JScrollPane(areaLexico));
+        tabs.addTab("2. Análisis Sintáctico (AST)", new JScrollPane(areaSintactico));
+        tabs.addTab("3. Análisis Semántico (Símbolos)", new JScrollPane(areaSemantico));
+        tabs.addTab("4. Optimización (AST Optimizado)", new JScrollPane(areaOptimizado));
+        tabs.addTab("5. Generación de Código (C++)", new JScrollPane(areaGenerado));
+        tabs.addTab("6. Ejecución (Consola)", new JScrollPane(areaConsola));
 
-        for (JTextArea area : Arrays.asList(areaLexico, areaAst, areaAstOptimizado, areaGenerado, areaConsola)) {
+        for (JTextArea area : Arrays.asList(areaLexico, areaSintactico, areaSemantico, areaOptimizado, areaGenerado, areaConsola)) {
             area.setFont(new Font("Consolas", Font.PLAIN, 14));
             area.setEditable(false);
             area.setMargin(new Insets(5, 5, 5, 5));
@@ -251,7 +261,9 @@ public class InterfazGrafica extends JFrame {
     }
 
     private void mostrarTokens(List<Token> tokens) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("--- CÓDIGO LIMPIO ---\n");
+        sb.append(analizadorLexico.limpiarCodigo(areaCodigo.getText())).append("\n\n");
+        sb.append("--- TOKENS ENCONTRADOS ---\n");
         for (Token token : tokens) {
             sb.append(String.format("<%-15s> %s%n", token.getTipo(), token.getValor()));
         }
