@@ -1,4 +1,3 @@
-// Archivo: src/AnalizadorLexico.java
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,9 +24,8 @@ public class AnalizadorLexico {
 
     public List<Token> analizar(String codigoLimpio) {
         List<Token> tokens = new ArrayList<>();
-        // Expresión regular actualizada para incluir strings.
         String patronTokens =
-                "(?<STRING>\"[^\"]*\")" // Reconoce cualquier cosa entre comillas
+                "(?<STRING>\"[^\"]*\")"
                         + "|(?<OPERADOR>==|!=|<=|>=|&&|\\|\\||[+\\-*/=<>])"
                         + "|(?<COMBINACION>[a-zA-Z_][a-zA-Z0-9_]*)"
                         + "|(?<NUMERO>\\d+)"

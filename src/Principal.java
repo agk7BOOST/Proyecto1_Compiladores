@@ -1,4 +1,3 @@
-// Principal.java
 import javax.swing.SwingUtilities;
 
 public class Principal {

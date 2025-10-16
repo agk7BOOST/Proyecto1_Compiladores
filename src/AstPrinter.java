@@ -1,4 +1,3 @@
-// Archivo: src/AstPrinter.java
 
 public class AstPrinter implements Visitor<String> {
 

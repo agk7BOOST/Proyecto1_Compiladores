@@ -1,7 +1,7 @@
 public class Token {
     private final TipoToken tipo;
     private final String valor;
-    private final int linea; // Campo añadido para el número de línea
+    private final int linea;
 
     private Token(TipoToken tipo, String valor, int linea) {
         this.tipo = tipo;
@@ -15,11 +15,9 @@ public class Token {
 
     @Override
     public String toString() {
-        // Formato: <TIPO, "VALOR", Linea N>
         return String.format("<%s, \"%s\", Linea %d>", tipo, valor, linea);
     }
 
-    // Builder actualizado para incluir la línea
     public static class Builder {
         private TipoToken tipo;
         private String valor;

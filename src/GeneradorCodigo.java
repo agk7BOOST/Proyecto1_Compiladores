@@ -1,4 +1,3 @@
-// Archivo: src/GeneradorCodigo.java
 
 public class GeneradorCodigo implements Visitor<String> {
 
@@ -7,14 +6,13 @@ public class GeneradorCodigo implements Visitor<String> {
     private String getIndentacion() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < indentacion; i++) {
-            sb.append("    "); // 4 espacios por nivel
+            sb.append("    ");
         }
         return sb.toString();
     }
 
     public String generar(Programa programa) {
         StringBuilder codigo = new StringBuilder();
-        // Añadimos los includes necesarios para el código C++
         codigo.append("#include <iostream>\n");
         codigo.append("#include <string>\n\n");
         codigo.append("int main() {\n");
@@ -71,7 +69,6 @@ public class GeneradorCodigo implements Visitor<String> {
         sb.append(String.format("if (%s) ", nodo.condicion.accept(this)));
         sb.append(nodo.cuerpoIf.accept(this));
         if (nodo.cuerpoElse != null) {
-            // Añade un espacio antes del 'else' y maneja la indentación si es un bloque
             if (!(nodo.cuerpoIf instanceof NodoBloque)) {
                 sb.append("\n").append(getIndentacion());
             }
@@ -90,7 +87,6 @@ public class GeneradorCodigo implements Visitor<String> {
 
     @Override
     public String visit(NodoFor nodo) {
-        // El .replace(";", "") es para quitar el punto y coma de las sentencias de declaración/asignación
         String inicializador = (nodo.inicializador != null) ? nodo.inicializador.accept(this).replace(";", "") : "";
         String condicion = (nodo.condicion != null) ? nodo.condicion.accept(this) : "";
         String incremento = (nodo.incremento != null) ? nodo.incremento.accept(this).replace(";", "") : "";
@@ -127,7 +123,6 @@ public class GeneradorCodigo implements Visitor<String> {
 
     @Override
     public String visit(NodoStringLiteral nodo) {
-        // El token ya incluye las comillas, lo cual es válido para C++
         return nodo.valor.getValor();
     }
 }

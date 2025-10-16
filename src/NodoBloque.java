@@ -1,4 +1,3 @@
-// Archivo: src/NodoBloque.java
 import java.util.List;
 
 public class NodoBloque implements Nodo {

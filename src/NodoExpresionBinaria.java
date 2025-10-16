@@ -1,5 +1,3 @@
-// Archivo: src/NodoExpresionBinaria.java
-
 public class NodoExpresionBinaria implements Nodo {
     public final Nodo izquierda;
     public final Token operador;

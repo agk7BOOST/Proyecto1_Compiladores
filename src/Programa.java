@@ -1,4 +1,3 @@
-// Archivo: src/Programa.java
 import java.util.List;
 
 public class Programa implements Nodo {

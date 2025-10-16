@@ -11,7 +11,6 @@ public class TablaSimbolos {
         this.resultados = new StringBuilder();
     }
 
-    // Declara un nuevo símbolo (variable) en la tabla
     public boolean declarar(String nombre, TipoToken tipo) {
         if (tabla.containsKey(nombre)) {
             resultados.append(String.format("ERROR SEMÁNTICO: La variable '%s' ya ha sido declarada.\n", nombre));
@@ -22,7 +21,6 @@ public class TablaSimbolos {
         return true;
     }
 
-    // Busca un símbolo en la tabla para verificar si existe
     public Optional<Simbolo> buscar(String nombre) {
         if (!tabla.containsKey(nombre)) {
             resultados.append(String.format("ERROR SEMÁNTICO: La variable '%s' no ha sido declarada.\n", nombre));

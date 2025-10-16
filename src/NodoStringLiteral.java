@@ -1,4 +1,3 @@
-// Archivo: src/NodoStringLiteral.java
 public class NodoStringLiteral implements Nodo {
     public final Token valor;
 

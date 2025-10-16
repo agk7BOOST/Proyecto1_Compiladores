@@ -16,15 +16,13 @@ public class AnalizadorSemantico {
         while (hayMasTokens()) {
             Token actual = tokenActual();
 
-            // Si es una palabra clave de tipo (int, float, etc.), es una declaración
             if (actual.getTipo() == TipoToken.PALABRA_CLAVE && esTipo(actual)) {
                 analizarDeclaracion();
             }
-            // Si es un identificador, puede ser una asignación o parte de otra expresión
             else if (actual.getTipo() == TipoToken.IDENTIFICADOR) {
                 analizarUsoVariable();
             } else {
-                avanzar(); // Ignoramos otros tokens como operadores, delimitadores, etc.
+                avanzar();
             }
         }
         return tablaSimbolos.getResultados();
@@ -35,15 +33,12 @@ public class AnalizadorSemantico {
         Token idToken = siguienteToken();
 
         if (idToken != null && idToken.getTipo() == TipoToken.IDENTIFICADOR) {
-            // Se declara la variable en la tabla de símbolos
             tablaSimbolos.declarar(idToken.getValor(), tipoToken.getTipo());
 
-            // Avanzamos más allá del tipo y el identificador
             avanzar(2);
 
-            // Si hay una asignación, verificamos los tipos
             if (tokenActual() != null && tokenActual().getValor().equals("=")) {
-                avanzar(); // Avanzamos sobre el '='
+                avanzar();
                 verificarTiposAsignacion();
             }
         } else {
@@ -52,7 +47,6 @@ public class AnalizadorSemantico {
     }
 
     private void analizarUsoVariable() {
-        // Al usar una variable (ej. en una asignación), verificamos si fue declarada
         tablaSimbolos.buscar(tokenActual().getValor());
         avanzar();
     }
@@ -61,15 +55,11 @@ public class AnalizadorSemantico {
         Token valorToken = tokenActual();
         if (valorToken == null) return;
 
-        // Si el valor es un identificador, verificamos que exista
         if (valorToken.getTipo() == TipoToken.IDENTIFICADOR) {
             tablaSimbolos.buscar(valorToken.getValor());
         }
-        // Si es un número, es compatible por defecto (en este lenguaje simple)
-        // Si no, sería un error de tipo, pero lo mantenemos simple por ahora.
     }
 
-    // --- Métodos de Ayuda ---
     private Token tokenActual() {
         return posicion < tokens.size() ? tokens.get(posicion) : null;
     }

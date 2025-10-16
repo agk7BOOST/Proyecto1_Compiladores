@@ -1,4 +1,3 @@
-// Archivo: src/Visitor.java
 public interface Visitor<T> {
     T visit(Programa programa);
     T visit(NodoBloque nodo);

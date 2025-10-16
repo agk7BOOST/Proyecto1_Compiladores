@@ -1,4 +1,3 @@
-// Archivo: src/NodoFor.java
 public class NodoFor implements Nodo {
     public final Nodo inicializador;
     public final Nodo condicion;

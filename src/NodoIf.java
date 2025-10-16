@@ -1,4 +1,3 @@
-// Archivo: src/NodoIf.java
 public class NodoIf implements Nodo {
     public final Nodo condicion;
     public final Nodo cuerpoIf;

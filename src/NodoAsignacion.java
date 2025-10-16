@@ -1,4 +1,3 @@
-// Archivo: src/NodoAsignacion.java
 public class NodoAsignacion implements Nodo {
     public final Token identificador;
     public final Nodo expresion;

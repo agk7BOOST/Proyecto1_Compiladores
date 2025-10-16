@@ -1,4 +1,3 @@
-// Archivo: src/AnalizadorSintactico.java
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,6 @@ public class AnalizadorSintactico {
         return new Programa(sentencias);
     }
 
-    // --- Métodos de Parseo Principales ---
 
     private Nodo parseDeclaracionOSentencia() {
         if (matchValor("int", "float") && siguienteEs(TipoToken.IDENTIFICADOR)) {
@@ -36,7 +34,6 @@ public class AnalizadorSintactico {
         return parseSentenciaDeExpresion();
     }
 
-    // --- Parseo de Sentencias Específicas ---
 
     private List<Nodo> parseBloque() {
         consumir("{", "Se esperaba '{' para iniciar un bloque.");
@@ -136,7 +133,6 @@ public class AnalizadorSintactico {
         return new NodoFor(inicializador, condicion, incremento, cuerpo);
     }
 
-    // --- Jerarquía de Parseo de Expresiones ---
 
     private Nodo parseExpresion() {
         return parseAsignacion();
@@ -204,7 +200,6 @@ public class AnalizadorSintactico {
         throw new RuntimeException("Expresión no válida encontrada cerca de '" + tokenActual().getValor() + "'");
     }
 
-    // --- Métodos de Ayuda (Helpers) ---
     private Token avanzar() { return tokens.get(posicion++); }
     private boolean hayMasTokens() { return posicion < tokens.size(); }
     private Token tokenActual() { return hayMasTokens() ? tokens.get(posicion) : null; }

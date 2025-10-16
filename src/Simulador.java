@@ -1,4 +1,3 @@
-// Archivo: src/Simulador.java
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +73,6 @@ public class Simulador implements Visitor<Object> {
 
     @Override
     public Object visit(NodoFor nodo) {
-        // El 'for' crea su propio ámbito para la variable de inicialización
         Map<String, Object> entornoAnterior = new HashMap<>(this.entorno);
 
         if (nodo.inicializador != null) {
@@ -87,7 +85,7 @@ public class Simulador implements Visitor<Object> {
             }
         }
 
-        this.entorno = entornoAnterior; // Sale del ámbito del 'for'
+        this.entorno = entornoAnterior;
         return null;
     }
 

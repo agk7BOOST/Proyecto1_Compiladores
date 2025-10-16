@@ -1,5 +1,3 @@
-// Archivo: src/OptimizadorCodigo.java
-
 public class OptimizadorCodigo implements Visitor<Nodo> {
 
     public Nodo optimizar(Nodo nodo) {
@@ -92,6 +90,6 @@ public class OptimizadorCodigo implements Visitor<Nodo> {
 
     @Override
     public Nodo visit(NodoStringLiteral nodo) {
-        return nodo; // Los strings son valores constantes, no se optimizan.
+        return nodo;
     }
 }

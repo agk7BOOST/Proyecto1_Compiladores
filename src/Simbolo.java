@@ -1,6 +1,6 @@
 public class Simbolo {
     private final String nombre;
-    private final TipoToken tipo; // ej. INT, FLOAT
+    private final TipoToken tipo;
 
     public Simbolo(String nombre, TipoToken tipo) {
         this.nombre = nombre;

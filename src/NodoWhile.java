@@ -1,4 +1,3 @@
-// Archivo: src/NodoWhile.java
 public class NodoWhile implements Nodo {
     public final Nodo condicion;
     public final Nodo cuerpo;

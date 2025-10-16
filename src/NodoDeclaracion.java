@@ -1,5 +1,3 @@
-// Archivo: src/NodoDeclaracion.java
-
 public class NodoDeclaracion implements Nodo {
     public final Token tipo;
     public final Token identificador;

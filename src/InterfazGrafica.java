@@ -1,4 +1,3 @@
-// Archivo: src/InterfazGrafica.java
 import com.formdev.flatlaf.FlatDarculaLaf;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -70,19 +69,14 @@ public class InterfazGrafica extends JFrame {
         panelPrincipal.setBorder(new EmptyBorder(0, 10, 10, 10));
         panelPrincipal.add(splitPanePrincipal, BorderLayout.CENTER);
 
-        // --- CAMBIO PARA ESTABILIZAR EL BOTÓN ---
         JButton botonCompilar = new JButton("Compilar y Ejecutar");
         botonCompilar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         botonCompilar.addActionListener(e -> compilar());
 
-        // 1. Creamos un panel contenedor para el botón.
-        // Por defecto, usa FlowLayout, que centra los componentes y respeta su tamaño.
         JPanel panelBoton = new JPanel();
         panelBoton.add(botonCompilar);
 
-        // 2. Añadimos el panel (en lugar del botón directamente) a la parte inferior.
         panelPrincipal.add(panelBoton, BorderLayout.SOUTH);
-        // --- FIN DEL CAMBIO ---
 
         add(panelPrincipal, BorderLayout.CENTER);
         setJMenuBar(crearBarraMenu());
@@ -102,7 +96,6 @@ public class InterfazGrafica extends JFrame {
             limpiarResultados();
             String codigo = areaCodigo.getText();
 
-            // --- FASE 1: ANÁLISIS LÉXICO ---
             String codigoLimpio = analizadorLexico.limpiarCodigo(codigo);
             List<Token> tokens = analizadorLexico.analizar(codigoLimpio);
             mostrarTokens(tokens);
@@ -116,12 +109,10 @@ public class InterfazGrafica extends JFrame {
                 return;
             }
 
-            // --- FASE 2: ANÁLISIS SINTÁCTICO ---
             AnalizadorSintactico parser = new AnalizadorSintactico(tokens);
             Programa ast = parser.analizar();
             areaSintactico.setText(new AstPrinter().print(ast));
 
-            // --- FASE 3: ANÁLISIS SEMÁNTICO ---
             AnalizadorSemantico semantico = new AnalizadorSemantico(tokens);
             String resultadoSemantico = semantico.analizar();
             areaSemantico.setText(resultadoSemantico);
@@ -130,15 +121,12 @@ public class InterfazGrafica extends JFrame {
                 return;
             }
 
-            // --- FASE 4: OPTIMIZACIÓN DE CÓDIGO ---
             OptimizadorCodigo optimizador = new OptimizadorCodigo();
             Programa astOptimizado = (Programa) optimizador.optimizar(ast);
             areaOptimizado.setText(new AstPrinter().print(astOptimizado));
 
-            // --- FASE 5: GENERACIÓN DE CÓDIGO INTERMEDIO ---
             areaGenerado.setText(new GeneradorCodigo().generar(astOptimizado));
 
-            // --- FASE 6: EJECUCIÓN (SIMULACIÓN) ---
             Simulador simulador = new Simulador();
             String salidaConsola = simulador.simular(astOptimizado);
             areaConsola.setText(salidaConsola);

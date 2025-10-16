@@ -1,5 +1,3 @@
-// Archivo: src/NodoVariable.java
-
 public class NodoVariable implements Nodo {
     public final Token nombre;
     public NodoVariable(Token nombre) { this.nombre = nombre; }

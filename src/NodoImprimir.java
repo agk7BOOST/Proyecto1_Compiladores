@@ -1,4 +1,3 @@
-// Archivo: src/NodoImprimir.java
 public class NodoImprimir implements Nodo {
     public final Nodo expresion;
 
