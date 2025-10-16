@@ -14,7 +14,7 @@ Proyecto universitario para la materia de Compiladores, enfocado en las seis fas
 
 ## 📸 Vista Previa de la Aplicación
 
-\<img width="881" height="694" alt="image" src="[https://github.com/user-attachments/assets/35bea543-2054-4102-9675-bb492cd8246b](https://github.com/user-attachments/assets/35bea543-2054-4102-9675-bb492cd8246b)" /\>
+<img width="1916" height="984" alt="image" src="https://github.com/user-attachments/assets/6dd1de41-6132-4103-af2f-f4d85b0046af" />
 
 -----
 
